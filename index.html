@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0 viewport-fit=cover">
+	<meta name=”format-detection” content=”telephone=no” />
+	<title>vs斗兽棋</title>
+	<link rel="stylesheet" href="../public/animate.min.css">
+	<link rel="stylesheet" href="../public/css/game-level.css">
+	<link rel="stylesheet" href="game.css?v=2-1803021859">
+	<link rel="icon" href="data:;base64,=">
+	<script>
+    //屏幕自适应
+    (function(win){var doc=win.document;var docEl=doc.documentElement;var tid;function refreshRem(){var width=docEl.getBoundingClientRect().width;if(width>540){width=540}var rem=width/10;docEl.style.fontSize=rem+"px"}win.addEventListener("resize",function(){clearTimeout(tid);tid=setTimeout(refreshRem,300)},false);win.addEventListener("pageshow",function(e){if(e.persisted){clearTimeout(tid);tid=setTimeout(refreshRem,300)}},false);refreshRem()})(window);
+  </script>
+	<script src="../public/lib/jquery.min.js"></script>
+	<script src="../public/lib/jquery.cookie.js"></script>
+	<div id="testError"></div>
+	<script type="text/javascript">
+		var g_flag = 0;
+		/* 客户端调用 */
+		function voiceSwitch(status, hd_uid) { //hd_uid :红豆uid
+				var $tsVioce;
+				if (hd_uid == user1_info.uid) {
+					$tsVioce = $('.user1 .voice');
+				}
+				else {
+					$tsVioce = $('.user2 .voice');
+				}
+				if (status == 1) {
+					$tsVioce.removeClass('no-voice');
+				}
+				else {
+					$tsVioce.addClass('no-voice');
+				}
+		}
+    	/* 异常处理 */
+		window.addEventListener('error', function (e) {
+		  
+		  	var thedevice = navigator.userAgent.toLowerCase();
+		  	var errorObj = {
+				stack: e.error.stack,
+				lineno: e.lineno,
+				filename: e.filename.match(/\/\w{1,}\.js/ig),
+				device: thedevice
+		  	};
+
+		    if ( errorObj.stack && errorObj.lineno && errorObj.filename ) {
+		    	console.error(errorObj.stack + ':: '+ '【错误的行数】:'+errorObj.lineno+ ' 【文件】: ' + errorObj.filename );
+		    	errorSend(errorObj);
+		    	return;
+		    }
+			if ( errorObj.stack  && errorObj.filename ) {
+				console.error(errorObj.stack + '::'+ '【错误的文件】: ' + errorObj.filename);
+				errorSend(errorObj);
+				return;
+			}
+			if (errorObj.stack) {
+				console.error(errorObj.stack);
+				errorSend(errorObj);
+			}
+
+			function errorSend (errorObj) {
+				$.ajax({
+				   	type: "GET",
+					// url: "http://172.16.1.223:8888/log",
+					url: "https://59.110.25.20:8443/log",
+					data: errorObj,
+					success: function(errorObj){
+						console.log( "Data Saved: " + errorObj );
+					}
+				});
+
+			}
+		});
+    </script>
+	<script src="../public/lib/fastclick.js"></script>
+	<script src="encoding-indexes.js"></script>
+	<script src="encoding.js"></script>
+	<script src="bson.js"></script>
+	<script src="../public/reconnecting-websocket.js"></script>
+	<script src="../public/socketNet.js"></script>
+	
+</head>
+<body>
+	<div class="wrapper">
+		
+	
+		<div class="box">
+			<div class="bg-net"></div>
+			<div class="item item1"></div>
+			<div class="item item2"></div>
+			<div class="item item3"></div>
+			<div class="item item4"></div>
+			<div class="item item5"></div>
+			<div class="item item6"></div>
+			<div class="item item7"></div>
+			<div class="item item8"></div>
+			<div class="item item9"></div>
+			<div id="second-box">
+				<h3></h3>
+			</div>
+			<div class="mes-box">
+				<h5 id="responseText" style="display: none;">未初始化。。</h5>
+
+				<div class="dialog-match">
+					<button id="match" >开始匹配</button>
+					<!-- <button id="match" onclick="startPlay()">开始匹配</button> -->
+				</div>
+				<div class="mesg-wrap">
+					<div class="each-team side1">你是X方</div>
+
+					<div class="give-up-box" style="display: block;">
+						<button id="giveup-btn">认输</button>
+					</div>
+				</div>
+			</div>
+			<div class="animals"></div>
+		</div>
+		<div class="ref"></div>
+		<div class="tool-bar">
+<!-- 			<div class="tool-bar-btn out-btn"></div>
+			<div class="tool-bar-btn record-btn"></div>
+			<div class="tool-bar-btn voice-btn"></div> -->
+			<!-- <div id="bgMusic" class="tool-bar-btn music-btn"></div> -->
+		</div>
+
+		<div class="user-box">
+			<div class="user user1 x-team">
+				<div class="box-short box-img">
+					<a href="javascript:void(0);"></a>
+					<img class="user-img" src alt="">
+					<span class="voice icon-little"></span>
+				</div>
+				<div class="box-long ">
+					<div class="litte-bar2 nick-bar"><div class="nick-inner">大河的阿凡达</div><div class="time-box time1"><span class="time">60</span>s</div></div>
+
+				</div>
+			</div>
+			<div class="user user2 x-team">
+				<div class="box-short box-img">
+					<a href="javascript:void(0);"></a>
+					<img class="user-img" src alt="">
+					<span class="voice icon-little"></span>
+				</div>
+				<div class="box-long">
+					<div class="litte-bar2 nick-bar"><div class="nick-inner">斗罗大陆大</div><div class="time-box time2"><span class="time">60</span>s</div></div><!-- <div class="litte-bar3"><a id="focus" href="javascript:void(0);">关注</a></div> -->
+
+				</div>
+				
+			</div>
+		</div>
+		<!-- <div id="second-box">
+			<h3></h3>
+		</div> -->
+		<!-- <div class="mes-box">
+			<h5 id="responseText" style="display: none;">未初始化。。</h5>
+
+			<div class="dialog-match">
+				<button id="match" >开始匹配</button>
+				<button id="match" onclick="startPlay()">开始匹配</button>
+			</div>
+			<div class="mesg-wrap">
+				<div class="each-team side1">你是X方</div>
+
+				<div class="give-up-box" style="display: block;">
+					<button id="giveup-btn">认输</button>
+				</div>
+			</div>
+		</div> -->
+		<div class="dialog-middle-box turn-tip p1 animated fadeIn">
+			<p>你的回合</p>
+		</div>
+		<div class="dialog-middle-box turn-tip p2 animated fadeIn">
+			<p>对手的回合</p>
+		</div>
+		<div class="dialog-start-tips ready">
+			<p>游戏开始</p>
+		</div>
+		<div class="dialog-layer">
+			<div class="dialog-box">
+				<p class="dialog-p">xxx赢了</p>
+			</div>
+		</div>
+		<div id="log"></div>
+		<audio id="audio_bg" loop="true">你的浏览器不支持喔！</audio>
+		<audio id="audio_ani">你的浏览器不支持喔！</audio>
+		<div class="dialog-layer2"></div>
+	</div>
+	<div class="dialog-alert">
+		<div class="alert-wrap">
+			<div class="alert-content">
+				<p>确定要认输了？</p>
+			</div>
+			<div class="alert-bottom">
+				<a class="c-normal handler_alert" data-handler="1" href="javascript:void(0);">确定</a>
+				<a class="c-normal handler_alert" data-handler="0" href="javascript:void(0);" >取消</a>
+			</div>
+		</div>
+	</div>
+	<!-- <div class="no-ready"></div> -->
+		<!--<script type="text/javascript" src="../public/howler.js?v=1215"></script>-->
+	<script type="text/javascript" src="../public/anime.min.js"></script>
+	<script src="../public/common2.js?v=1216"></script>
+	<script src="core.js?v=0224"></script>
+	<script src="net.js?v=1215"></script>
+
+	<!-- <script type="text/javascript">  
+		// 延迟加载
+	   function downloadJSAtOnload() { 
+	   	   var arr = ["net.js"]; 
+	   	   for (var i = 0; i < arr.length; i++) {
+
+		       var element = document.createElement("script");  
+		       element.src = arr[i];  
+		       document.body.appendChild(element);  
+	   	   }
+	   }  
+	   if (window.addEventListener)  
+	      window.addEventListener("load",downloadJSAtOnload, false);  
+	   else if (window.attachEvent)  
+	      window.attachEvent("onload",downloadJSAtOnload);  
+	   else 
+	      window.onload = downloadJSAtOnload;  
+	</script> -->
+		
+</body>
+</html>
